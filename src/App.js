@@ -1,26 +1,42 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+//import axios from 'axios';
+import Home from './Home';
+import Login from './login.js';  
+import fire from './config/firebase';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+class App extends React.Component {
+  constructor(props){
+    super(props);
+
+    this.state={
+      user: null
+    }
+
+    this.authListener = this.authListener.bind(this);
+  }
+
+  componentDidMount(){
+    this.authListener();
+  }
+
+  authListener = () => {
+    fire.auth().onAuthStateChanged((user) =>{
+      if (user) {
+        this.setState({ user });
+      } else{
+        this.setState({ user:null });
+      }
+    })
+  }
+
+  render(){
+  return(
+    <div className="App"> 
+   {this.state.user ? (<Home />): (<Login user={this.state.user}/>) }
+  
     </div>
   );
+}
 }
 
 export default App;
